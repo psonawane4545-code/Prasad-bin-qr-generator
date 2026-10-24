@@ -1,276 +1,422 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PrasadQRCode Generator</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f3f6;color:#111827}
-header{background:#111827;color:white;padding:22px 15px;text-align:center}
-header h1{margin:0;font-size:26px}
-header p{margin:8px 0 0;color:#d1d5db}
-.container{max-width:750px;margin:15px auto;padding:18px;background:white;border-radius:18px}
-.section{margin-bottom:28px}
-.section h2{font-size:23px;margin-bottom:15px}
-.grid{display:grid;gap:10px}
-.aisle-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.rack-grid,.level-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
-.bin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.option{border:none;background:#eef0f4;color:#111827;border-radius:15px;min-height:60px;font-size:19px;font-weight:bold;cursor:pointer}
-.option.active{background:#111827;color:white}
-.selection{background:#f3f4f6;border-radius:12px;padding:18px;text-align:center;margin-bottom:20px}
-.selection p{margin:0 0 8px;color:#6b7280}
-#selectedLocation{font-size:25px;font-weight:bold;word-break:break-word}
-.generate,.download{width:100%;padding:16px;border:0;border-radius:12px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:12px}
-.generate{background:#111827;color:white}
-.download{background:#16a34a;color:white}
-#qrResult{display:none;text-align:center;margin-top:25px;padding:20px;border:1px solid #e5e7eb;border-radius:15px}
-#qrCanvasWrap{display:flex;justify-content:center;align-items:center;min-height:20px}
-#qrCanvasWrap canvas,#qrCanvasWrap img{max-width:100%;height:auto}
-#qrText{font-size:23px;font-weight:bold;margin:15px 0;word-break:break-word}
-#status{margin-top:12px;text-align:center;color:#b91c1c;overflow-wrap:anywhere}
-.footer{text-align:center;padding:20px;color:#6b7280;font-size:13px}
-@media(max-width:400px){
-.container{margin:10px;padding:14px}
-.option{min-height:55px;font-size:17px}
-#selectedLocation{font-size:21px}
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f3f6;
+  color: #111827;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 22px 15px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+header p {
+  margin: 8px 0 0;
+  color: #d1d5db;
+}
+
+.container {
+  max-width: 750px;
+  margin: 15px auto;
+  padding: 18px;
+  background: white;
+  border-radius: 18px;
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.section h2 {
+  font-size: 23px;
+  margin-bottom: 15px;
+}
+
+.grid {
+  display: grid;
+  gap: 10px;
+}
+
+.aisle-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rack-grid,
+.level-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.bin-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.option {
+  border: none;
+  background: #eef0f4;
+  color: #111827;
+  border-radius: 15px;
+  min-height: 60px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.option.active {
+  background: #111827;
+  color: white;
+}
+
+.selection {
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.selection p {
+  margin: 0 0 8px;
+  color: #6b7280;
+}
+
+#selectedLocation {
+  font-size: 25px;
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.generate,
+.download {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.generate {
+  background: #111827;
+  color: white;
+}
+
+.download {
+  background: #16a34a;
+  color: white;
+}
+
+#qrResult {
+  display: none;
+  text-align: center;
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+}
+
+#qrCanvasWrap {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+#qrCanvasWrap canvas,
+#qrCanvasWrap img {
+  max-width: 100%;
+  height: auto;
+}
+
+#qrText {
+  font-size: 23px;
+  font-weight: bold;
+  margin: 15px 0;
+  word-break: break-word;
+}
+
+#status {
+  margin-top: 12px;
+  text-align: center;
+  color: #b91c1c;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+@media(max-width:400px) {
+  .container {
+    margin: 10px;
+    padding: 14px;
+  }
+
+  .option {
+    min-height: 55px;
+    font-size: 17px;
+  }
+
+  #selectedLocation {
+    font-size: 21px;
+  }
 }
 </style>
 </head>
 
 <body>
+
 <header>
-<h1>PrasadQRCode</h1>
-<p>Warehouse Location QR Generator</p>
+  <h1>PrasadQRCode</h1>
+  <p>Warehouse Location QR Generator</p>
 </header>
 
 <div class="container">
 
-<div class="section">
-<h2>Aisle</h2>
-<div id="aisleGrid" class="grid aisle-grid"></div>
+  <div class="section">
+    <h2>Aisle</h2>
+    <div id="aisleGrid" class="grid aisle-grid"></div>
+  </div>
+
+  <div class="section">
+    <h2>Rack</h2>
+    <div id="rackGrid" class="grid rack-grid"></div>
+  </div>
+
+  <div class="section">
+    <h2>Level</h2>
+    <div id="levelGrid" class="grid level-grid"></div>
+  </div>
+
+  <div class="section">
+    <h2>Bin</h2>
+    <div id="binGrid" class="grid bin-grid"></div>
+  </div>
+
+  <div class="selection">
+    <p>Selected Location</p>
+    <div id="selectedLocation">F0-A01-001-01-A</div>
+  </div>
+
+  <button class="generate" id="generateButton" type="button">
+    Generate QR Code
+  </button>
+
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <div id="qrResult">
+    <h2>Location QR Code</h2>
+    <div id="qrCanvasWrap"></div>
+    <div id="qrText">F0-A01-001-01-A</div>
+
+    <button class="download" id="downloadButton" type="button">
+      Download QR Code PNG
+    </button>
+  </div>
+
 </div>
 
-<div class="section">
-<h2>Rack</h2>
-<div id="rackGrid" class="grid rack-grid"></div>
+<div class="footer">
+  PrasadQRCode
 </div>
-
-<div class="section">
-<h2>Level</h2>
-<div id="levelGrid" class="grid level-grid"></div>
-</div>
-
-<div class="section">
-<h2>Bin</h2>
-<div id="binGrid" class="grid bin-grid"></div>
-</div>
-
-<div class="selection">
-<p>Selected Location</p>
-<div id="selectedLocation">F0-A1-001-01-A</div>
-</div>
-
-<button class="generate" id="generateButton" type="button">
-Generate QR Code
-</button>
-
-<div id="status" role="status" aria-live="polite"></div>
-
-<div id="qrResult">
-<h2>Location QR Code</h2>
-<div id="qrCanvasWrap"></div>
-<div id="qrText">F0-A1-001-01-A</div>
-<button class="download" id="downloadButton" type="button">
-Download QR Code PNG
-</button>
-</div>
-
-</div>
-
-<div class="footer">PrasadQRCode</div>
 
 <script>
-"use strict";
-
-let selected={
-aisle:"A1",
-rack:"001",
-level:"01",
-bin:"A"
+// DEFAULT SELECTED LOCATION
+let selected = {
+  aisle: "A01",
+  rack: "001",
+  level: "01",
+  bin: "A"
 };
 
 // CREATE BUTTONS
-function createGrid(containerId,values,key){
-const container=document.getElementById(containerId);
+function createGrid(containerId, values, key) {
+  const container = document.getElementById(containerId);
 
-values.forEach(value=>{
-const button=document.createElement("button");
-button.type="button";
-button.className="option";
-button.textContent=value;
-button.dataset.value=value;
+  values.forEach(value => {
+    const button = document.createElement("button");
 
-button.addEventListener("click",()=>{
-selected[key]=value;
-updateGrid();
-updateLocation();
-});
+    button.type = "button";
+    button.className = "option";
+    button.textContent = value;
+    button.dataset.value = value;
 
-container.appendChild(button);
-});
+    button.onclick = function() {
+      selected[key] = value;
+      updateGrid();
+      updateLocation();
+    };
+
+    container.appendChild(button);
+  });
 }
 
 // UPDATE ACTIVE BUTTONS
-function updateGrid(){
-document.querySelectorAll(".option").forEach(button=>{
-const parent=button.parentElement.id;
+function updateGrid() {
+  document.querySelectorAll(".option").forEach(button => {
+    const parent = button.parentElement.id;
+    let key = "";
 
-const key=parent==="aisleGrid"?"aisle":
-parent==="rackGrid"?"rack":
-parent==="levelGrid"?"level":
-parent==="binGrid"?"bin":"";
+    if (parent === "aisleGrid") key = "aisle";
+    if (parent === "rackGrid") key = "rack";
+    if (parent === "levelGrid") key = "level";
+    if (parent === "binGrid") key = "bin";
 
-button.classList.toggle(
-"active",
-!!key && button.dataset.value===selected[key]
-);
-});
+    button.classList.toggle(
+      "active",
+      button.dataset.value === selected[key]
+    );
+  });
 }
 
-// LOCATION CODE
-function getLocationCode(){
-return "F0-"+selected.aisle+"-"+
-String(selected.rack).padStart(3,"0")+"-"+
-String(selected.level).padStart(2,"0")+"-"+
-selected.bin;
+// LOCATION CODE FORMAT
+function getLocationCode() {
+  const aisle = selected.aisle;
+  const rack = String(selected.rack).padStart(3, "0");
+  const level = String(selected.level).padStart(2, "0");
+  const bin = selected.bin;
+
+  return "F0-" + aisle + "-" + rack + "-" + level + "-" + bin;
 }
 
 // DISPLAY LOCATION
-function updateLocation(){
-document.getElementById("selectedLocation").textContent=
-getLocationCode();
+function updateLocation() {
+  document.getElementById("selectedLocation").textContent =
+    getLocationCode();
 }
 
 // GENERATE QR CODE
-function generateQR(){
+function generateQR() {
+  const locationCode = getLocationCode();
+  const wrap = document.getElementById("qrCanvasWrap");
+  const status = document.getElementById("status");
 
-const status=document.getElementById("status");
-const wrap=document.getElementById("qrCanvasWrap");
-const result=document.getElementById("qrResult");
-const locationCode=getLocationCode();
+  status.textContent = "";
+  wrap.innerHTML = "";
 
-status.textContent="";
-status.style.color="#b91c1c";
-wrap.replaceChildren();
+  if (typeof QRCode === "undefined") {
+    status.textContent =
+      "QR library load nahi hui. Internet check karke retry karein.";
+    return;
+  }
 
-if(typeof QRCode==="undefined"){
-status.textContent=
-"QR library load nahi hui. Internet check karke page reload karein.";
-return;
+  try {
+    new QRCode(wrap, {
+      text: locationCode,
+      width: 300,
+      height: 300,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById("qrText").textContent =
+      locationCode;
+
+    document.getElementById("qrResult").style.display = "block";
+  } catch (error) {
+    status.textContent = "QR Code generation failed!";
+  }
 }
 
-try{
+// DOWNLOAD QR CODE PNG
+function downloadQR() {
+  const wrap = document.getElementById("qrCanvasWrap");
+  const canvas = wrap.querySelector("canvas");
+  const img = wrap.querySelector("img");
 
-new QRCode(wrap,{
-text:locationCode,
-width:300,
-height:300,
-colorDark:"#000000",
-colorLight:"#ffffff",
-correctLevel:QRCode.CorrectLevel.H
-});
+  const locationCode = getLocationCode();
+  let imageURL = "";
 
-document.getElementById("qrText").textContent=locationCode;
+  if (canvas) {
+    imageURL = canvas.toDataURL("image/png");
+  } else if (img && img.src) {
+    imageURL = img.src;
+  } else {
+    document.getElementById("status").textContent =
+      "Pehle QR Code generate karein.";
+    return;
+  }
 
-result.style.display="block";
-status.style.color="#166534";
-status.textContent="QR Code ready!";
-
-}catch(err){
-
-console.error("QR generation issue:",err);
-status.style.color="#b91c1c";
-status.textContent=
-"QR generate nahi hua. Page reload karke dobara try karein.";
-
-}
-}
-
-// DOWNLOAD QR
-function downloadQR(){
-
-const wrap=document.getElementById("qrCanvasWrap");
-const canvas=wrap.querySelector("canvas");
-const img=wrap.querySelector("img");
-let url="";
-
-if(canvas){
-url=canvas.toDataURL("image/png");
-}else if(img && img.src){
-url=img.src;
-}else{
-document.getElementById("status").textContent=
-"Pehle QR Code generate karein.";
-return;
+  const link = document.createElement("a");
+  link.download = locationCode + ".png";
+  link.href = imageURL;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
-const link=document.createElement("a");
-link.download=getLocationCode()+".png";
-link.href=url;
-link.click();
-}
+// AISLE A01 TO A29 + CR01, FV01, FR01
+createGrid(
+  "aisleGrid",
+  [
+    ...Array.from({length: 29}, (_, i) =>
+      "A" + String(i + 1).padStart(2, "0")
+    ),
+    "CR01", "FV01", "FR01"
+  ],
+  "aisle"
+);
+
+// RACK 001 TO 024
+createGrid(
+  "rackGrid",
+  Array.from({length: 24}, (_, i) =>
+    String(i + 1).padStart(3, "0")
+  ),
+  "rack"
+);
+
+// LEVEL 01 TO 11
+createGrid(
+  "levelGrid",
+  Array.from({length: 11}, (_, i) =>
+    String(i + 1).padStart(2, "0")
+  ),
+  "level"
+);
+
+// BIN A TO F
+createGrid(
+  "binGrid",
+  ["A", "B", "C", "D", "E", "F"],
+  "bin"
+);
 
 // BUTTON EVENTS
-document.getElementById("generateButton")
-.addEventListener("click",generateQR);
-
-document.getElementById("downloadButton")
-.addEventListener("click",downloadQR);
-
-// AISLE A1-A21 + CR01, FV01, FR01
-createGrid(
-"aisleGrid",
-[
-...Array.from({length:21},(_,i)=>"A"+(i+1)),
-"CR01","FV01","FR01"
-],
-"aisle"
-);
-
-// RACK 001-028
-createGrid(
-"rackGrid",
-Array.from({length:28},(_,i)=>
-String(i+1).padStart(3,"0")
-),
-"rack"
-);
-
-// LEVEL 01-11
-createGrid(
-"levelGrid",
-Array.from({length:11},(_,i)=>
-String(i+1).padStart(2,"0")
-),
-"level"
-);
-
-// BIN A-F
-createGrid(
-"binGrid",
-["A","B","C","D","E","F"],
-"bin"
-);
+document.getElementById("generateButton").onclick = generateQR;
+document.getElementById("downloadButton").onclick = downloadQR;
 
 // INITIALIZE
 updateGrid();
 updateLocation();
 
 </script>
+
 </body>
 </html>
